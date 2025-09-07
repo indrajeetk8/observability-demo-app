@@ -3,11 +3,6 @@ pipeline {
   options {
     timestamps()
   }
-  tools {
-    maven 'Maven-3.9.5'
-    // Match pom.xml which uses Java 11
-    jdk 'JDK-17'
-  }
   environment {
     APP_NAME = 'observability-demo'
     IMAGE_TAG = "${env.BUILD_NUMBER}"
@@ -26,10 +21,18 @@ pipeline {
     stage('Build & Test') {
       steps {
         sh '''
-          set -euxo pipefail
-          mvn --version
-          java -version || true
-
+          set -eux
+          
+          # Check if Maven is available
+          if ! command -v mvn >/dev/null 2>&1; then
+            echo "Maven not found in PATH. Trying to find it..."
+            export PATH="/opt/maven/bin:/usr/share/maven/bin:$PATH"
+          fi
+          
+          # Check versions
+          mvn --version || echo "Maven not available"
+          java -version || echo "Java not available"
+          
           # Clean, compile and run tests
           mvn -B clean verify
         '''
@@ -44,7 +47,7 @@ pipeline {
     stage('Package') {
       steps {
         sh '''
-          set -euxo pipefail
+          set -eux
           mvn -B -DskipTests package
           ls -la target
         '''
@@ -62,7 +65,7 @@ pipeline {
       }
       steps {
         sh '''
-          set -euxo pipefail
+          set -eux
           IMAGE_REF="${DOCKER_REPOSITORY}:${IMAGE_TAG}"
           if [ -n "${DOCKER_REGISTRY}" ]; then IMAGE_REF="${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG}"; fi
           echo "Building ${IMAGE_REF}"
@@ -92,7 +95,6 @@ pipeline {
   post {
     always {
       echo "Pipeline completed"
-      sh 'docker system prune -f || true'
     }
   }
 }
