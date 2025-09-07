@@ -46,7 +46,7 @@ pipeline {
             post {
                 always {
                     // Publish test results
-                    junit allowEmptyResults: true, testResultsPattern: 'target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
                     
                     // Publish coverage results
                     publishHTML([
