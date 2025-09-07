@@ -1,0 +1,43 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: true
+    jsonData:
+      derivedFields:
+        - name: TraceID
+          matcherRegex: "traceId=(\\w+)"
+          url: "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Tempo\",\"queries\":[{\"query\":\"$${__value.raw}\",\"queryType\":\"\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}"
+          datasourceUid: tempo
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    uid: tempo
+    editable: true
+    jsonData:
+      tracesToLogs:
+        datasourceUid: loki
+        tags: [{ key: 'service.name', value: 'job' }]
+        mappedTags: [{ key: 'service.name', value: 'job' }]
+        mapTagNamesEnabled: false
+        spanStartTimeShift: '1h'
+        spanEndTimeShift: '1h'
+        filterByTraceID: false
+        filterBySpanID: false
+        lokiSearch: true
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true

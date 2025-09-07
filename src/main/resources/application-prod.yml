@@ -1,0 +1,87 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: observability-demo
+  
+  # Production Database Configuration
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:observability_demo}
+    username: ${DB_USER:demo_user}
+    password: ${DB_PASSWORD:demo_password}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Actuator Configuration for Production
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  
+  # Metrics Configuration for Grafana Cloud
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 10s
+        descriptions: true
+        pushgateway:
+          enabled: false
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5, 0.95, 0.99
+        
+  # Tracing Configuration for Grafana Cloud Tempo
+  tracing:
+    sampling:
+      probability: 0.1  # Reduce sampling in production
+    enabled: true
+  
+  otlp:
+    tracing:
+      export:
+        url: ${GRAFANA_CLOUD_TEMPO_URL:https://tempo-eu-west-0.grafana.net:443}/v1/traces
+        headers:
+          Authorization: "Basic ${GRAFANA_CLOUD_API_KEY}"
+    metrics:
+      export:
+        url: ${GRAFANA_CLOUD_PROMETHEUS_URL:https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push}
+        headers:
+          Authorization: "Basic ${GRAFANA_CLOUD_API_KEY}"
+
+# Logging Configuration for Production
+logging:
+  level:
+    com.demo.observability: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+# Custom Application Properties
+app:
+  demo:
+    feature-flags:
+      slow-endpoint: false
+      error-endpoint: false
+    metrics:
+      custom-enabled: true

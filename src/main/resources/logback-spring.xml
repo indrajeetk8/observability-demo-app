@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    
+    <springProfile name="!prod">
+        <!-- Console appender for local development -->
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <timestamp/>
+                    <logLevel/>
+                    <loggerName/>
+                    <mdc/>
+                    <arguments/>
+                    <message/>
+                    <stackTrace/>
+                </providers>
+            </encoder>
+        </appender>
+        
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+    
+    <springProfile name="prod">
+        <!-- Loki appender for production -->
+        <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+            <http>
+                <url>${LOKI_URL:-http://localhost:3100/loki/api/v1/push}</url>
+                <auth>
+                    <username>${LOKI_USERNAME:-}</username>
+                    <password>${LOKI_PASSWORD:-}</password>
+                </auth>
+            </http>
+            <format>
+                <label>
+                    <pattern>application=${spring.application.name:-unknown},host=${HOSTNAME:-unknown},level=%level</pattern>
+                </label>
+                <message>
+                    <pattern>
+                        {
+                            "timestamp": "%date{ISO8601}",
+                            "level": "%level",
+                            "thread": "%thread",
+                            "logger": "%logger{36}",
+                            "message": "%message",
+                            "traceId": "%X{traceId:-}",
+                            "spanId": "%X{spanId:-}",
+                            "mdc": "%mdc"
+                        }
+                    </pattern>
+                </message>
+            </format>
+        </appender>
+        
+        <!-- Console appender with JSON format for containers -->
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <timestamp/>
+                    <logLevel/>
+                    <loggerName/>
+                    <mdc/>
+                    <arguments/>
+                    <message/>
+                    <stackTrace/>
+                </providers>
+            </encoder>
+        </appender>
+        
+        <root level="INFO">
+            <appender-ref ref="LOKI"/>
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+    
+    <!-- Application specific loggers -->
+    <logger name="com.demo.observability" level="DEBUG"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    
+</configuration>

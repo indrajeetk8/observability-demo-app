@@ -1,0 +1,83 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: observability-demo
+  
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,httptrace
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  
+  # Metrics Configuration
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5, 0.95, 0.99
+        
+  # Tracing Configuration
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
+  
+  otlp:
+    metrics:
+      export:
+        url: ${GRAFANA_OTLP_METRICS_URL:http://localhost:4318/v1/metrics}
+        headers:
+          Authorization: "Basic ${GRAFANA_CLOUD_API_KEY:}"
+    tracing:
+      export:
+        url: ${GRAFANA_OTLP_TRACES_URL:http://localhost:4318/v1/traces}
+        headers:
+          Authorization: "Basic ${GRAFANA_CLOUD_API_KEY:}"
+
+# Logging Configuration
+logging:
+  level:
+    com.demo.observability: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+# Custom Application Properties
+app:
+  demo:
+    feature-flags:
+      slow-endpoint: true
+      error-endpoint: true
+    metrics:
+      custom-enabled: true
