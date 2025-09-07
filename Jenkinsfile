@@ -6,7 +6,7 @@ pipeline {
   tools {
     maven 'Maven-3.9.5'
     // Match pom.xml which uses Java 11
-    jdk 'JDK-11'
+    jdk 'JDK-17'
   }
   environment {
     APP_NAME = 'observability-demo'
