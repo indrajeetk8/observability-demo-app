@@ -11,6 +11,9 @@ RUN mvn clean package -DskipTests
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 # Create app directory and user
 RUN addgroup -g 1001 -S appgroup && \
     adduser -u 1001 -S appuser -G appgroup
