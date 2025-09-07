@@ -2,6 +2,9 @@ package com.demo.observability.controller;
 
 import com.demo.observability.service.DemoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,8 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,6 +31,9 @@ class DemoControllerTest {
 
     @MockBean
     private DemoService demoService;
+    
+    @MockBean
+    private MeterRegistry meterRegistry;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -41,6 +48,27 @@ class DemoControllerTest {
         sampleUser.put("email", "john@example.com");
         sampleUser.put("createdAt", System.currentTimeMillis());
         sampleUser.put("status", "active");
+        
+        // Set up MeterRegistry mocks
+        Counter mockCounter = mock(Counter.class);
+        Timer mockTimer = mock(Timer.class);
+        
+        // Mock different variations of counter method calls
+        when(meterRegistry.counter(anyString())).thenReturn(mockCounter);
+        when(meterRegistry.counter(anyString(), anyString(), anyString())).thenReturn(mockCounter);
+        when(meterRegistry.counter(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(mockCounter);
+        when(meterRegistry.counter(anyString(), any(String[].class))).thenReturn(mockCounter);
+        
+        // Mock timer method calls
+        when(meterRegistry.timer(anyString())).thenReturn(mockTimer);
+        when(meterRegistry.timer(anyString(), any(String[].class))).thenReturn(mockTimer);
+        
+        // Mock gauge method
+        when(meterRegistry.gauge(anyString(), any(Double.class))).thenReturn(null);
+        
+        // Configure counter and timer behavior - these methods are void
+        doNothing().when(mockCounter).increment();
+        doNothing().when(mockTimer).record(anyLong(), any());
     }
 
     @Test
