@@ -1,6 +1,5 @@
 package com.demo.observability.service;
 
-import io.micrometer.observation.annotation.Observed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ public class DemoService {
     private final Map<String, Map<String, Object>> userDatabase = new ConcurrentHashMap<>();
     private final Random random = new Random();
     
-    @Observed(name = "demo.service.get.user")
     public Map<String, Object> getUser(String userId) {
         logger.debug("Looking up user in service layer: {}", userId);
         
@@ -34,7 +32,6 @@ public class DemoService {
         return new HashMap<>(user);
     }
     
-    @Observed(name = "demo.service.create.user")
     public Map<String, Object> createUser(String userId, Map<String, Object> userData) {
         logger.debug("Creating user in service layer: {}", userId);
         
@@ -66,7 +63,6 @@ public class DemoService {
         return new HashMap<>(user);
     }
     
-    @Observed(name = "demo.service.process.data")
     public void processData(String data) {
         logger.debug("Processing data in service layer: {}", data);
         

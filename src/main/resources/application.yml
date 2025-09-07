@@ -26,7 +26,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus,httptrace
+        include: health,info,metrics,prometheus
   endpoint:
     health:
       show-details: always
@@ -45,24 +45,6 @@ management:
         http.server.requests: true
       percentiles:
         http.server.requests: 0.5, 0.95, 0.99
-        
-  # Tracing Configuration
-  tracing:
-    sampling:
-      probability: 1.0
-    enabled: true
-  
-  otlp:
-    metrics:
-      export:
-        url: ${GRAFANA_OTLP_METRICS_URL:http://localhost:4318/v1/metrics}
-        headers:
-          Authorization: "Basic ${GRAFANA_CLOUD_API_KEY:}"
-    tracing:
-      export:
-        url: ${GRAFANA_OTLP_TRACES_URL:http://localhost:4318/v1/traces}
-        headers:
-          Authorization: "Basic ${GRAFANA_CLOUD_API_KEY:}"
 
 # Logging Configuration
 logging:

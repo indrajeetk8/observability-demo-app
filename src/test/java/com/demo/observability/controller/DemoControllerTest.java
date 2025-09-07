@@ -82,7 +82,7 @@ class DemoControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.error").value("User not found"))
                 .andExpect(jsonPath("$.userId").value(userId))
-                .andExpected(jsonPath("$.requestId").exists());
+                .andExpect(jsonPath("$.requestId").exists());
     }
 
     @Test
@@ -100,9 +100,9 @@ class DemoControllerTest {
                 .content(objectMapper.writeValueAsString(userData)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpected(jsonPath("$.id").exists())
-                .andExpected(jsonPath("$.name").exists())
-                .andExpected(jsonPath("$.status").value("active"));
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").exists())
+                .andExpect(jsonPath("$.status").value("active"));
     }
 
     @Test
@@ -119,8 +119,8 @@ class DemoControllerTest {
         mockMvc.perform(post("/api/demo/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userData)))
-                .andExpected(status().isInternalServerError())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.error").value("Failed to create user"))
                 .andExpect(jsonPath("$.requestId").exists());
     }
@@ -130,7 +130,7 @@ class DemoControllerTest {
         mockMvc.perform(get("/api/demo/slow"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpected(jsonPath("$.message").value("This was a slow operation"))
+                .andExpect(jsonPath("$.message").value("This was a slow operation"))
                 .andExpect(jsonPath("$.processingTime").exists())
                 .andExpect(jsonPath("$.requestId").exists());
     }
@@ -153,11 +153,11 @@ class DemoControllerTest {
     void testErrorEndpoint_ForceError() throws Exception {
         mockMvc.perform(get("/api/demo/error")
                 .param("forceError", "true"))
-                .andExpected(status().isInternalServerError())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpected(jsonPath("$.error").value("Simulated error occurred"))
-                .andExpected(jsonPath("$.requestId").exists())
-                .andExpected(jsonPath("$.timestamp").exists());
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error").value("Simulated error occurred"))
+                .andExpect(jsonPath("$.requestId").exists())
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     @Test
@@ -167,6 +167,6 @@ class DemoControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Custom metrics generated"))
                 .andExpect(jsonPath("$.requestId").exists())
-                .andExpected(jsonPath("$.availableMetrics").exists());
+                .andExpect(jsonPath("$.availableMetrics").exists());
     }
 }

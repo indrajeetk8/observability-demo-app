@@ -4,7 +4,6 @@ import com.demo.observability.service.DemoService;
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.observation.annotation.Observed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -34,8 +33,8 @@ public class DemoController {
     }
     
     @GetMapping("/health")
-    @Timed(name = "demo.health.timer", description = "Timer for health endpoint")
-    @Counted(name = "demo.health.counter", description = "Counter for health endpoint calls")
+    @Timed(value = "demo.health.timer", description = "Timer for health endpoint")
+    @Counted(value = "demo.health.counter", description = "Counter for health endpoint calls")
     public ResponseEntity<Map<String, Object>> health() {
         String requestId = UUID.randomUUID().toString();
         MDC.put("requestId", requestId);
@@ -56,8 +55,7 @@ public class DemoController {
     }
     
     @GetMapping("/users/{userId}")
-    @Observed(name = "demo.user.get", contextualName = "get-user")
-    @Timed(name = "demo.user.get.timer")
+    @Timed(value = "demo.user.get.timer")
     public ResponseEntity<Map<String, Object>> getUser(@PathVariable String userId) {
         String requestId = UUID.randomUUID().toString();
         MDC.put("requestId", requestId);
@@ -88,8 +86,7 @@ public class DemoController {
     }
     
     @PostMapping("/users")
-    @Observed(name = "demo.user.create")
-    @Timed(name = "demo.user.create.timer")
+    @Timed(value = "demo.user.create.timer")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody Map<String, Object> userData) {
         String requestId = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
@@ -122,7 +119,7 @@ public class DemoController {
     }
     
     @GetMapping("/slow")
-    @Timed(name = "demo.slow.timer", description = "Timer for slow endpoint")
+    @Timed(value = "demo.slow.timer", description = "Timer for slow endpoint")
     public ResponseEntity<Map<String, Object>> slowEndpoint() {
         String requestId = UUID.randomUUID().toString();
         MDC.put("requestId", requestId);
@@ -153,7 +150,7 @@ public class DemoController {
     }
     
     @GetMapping("/error")
-    @Counted(name = "demo.error.counter")
+    @Counted(value = "demo.error.counter")
     public ResponseEntity<Map<String, Object>> errorEndpoint(@RequestParam(defaultValue = "false") boolean forceError) {
         String requestId = UUID.randomUUID().toString();
         MDC.put("requestId", requestId);

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observability Demo - Welcome Indrajeet!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .welcome-header {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .motivation-text {
+            color: #e74c3c;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .devops-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .app-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #3498db;
+        }
+
+        .app-title {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .endpoints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .endpoint-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .endpoint-card:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .endpoint-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .endpoint-url {
+            color: #3498db;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #27ae60;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .tech-badge {
+            background: #34495e;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="welcome-header">🚀 Welcome Indrajeet!</h1>
+        <p class="motivation-text">You will soon become a DevOps Engineer! 💪</p>
+        
+        <div class="devops-badge">
+            🎯 Future DevOps Engineer 🎯
+        </div>
+
+        <div class="app-info">
+            <h2 class="app-title">
+                <span class="status-indicator"></span>
+                Observability Demo Application
+            </h2>
+            <p>Spring Boot application with observability features including metrics, health checks, and structured logging.</p>
+            
+            <div class="tech-stack">
+                <span class="tech-badge">Spring Boot 2.7.18</span>
+                <span class="tech-badge">Java 11</span>
+                <span class="tech-badge">Micrometer</span>
+                <span class="tech-badge">Prometheus</span>
+                <span class="tech-badge">H2 Database</span>
+                <span class="tech-badge">Spring Actuator</span>
+            </div>
+        </div>
+
+        <h3 style="color: #2c3e50; margin-bottom: 20px;">🔗 Available Endpoints</h3>
+        <div class="endpoints-grid">
+            <div class="endpoint-card" onclick="window.open('/api/demo/health', '_blank')">
+                <div class="endpoint-name">🏥 Health Check</div>
+                <a href="/api/demo/health" class="endpoint-url">/api/demo/health</a>
+            </div>
+            <div class="endpoint-card" onclick="window.open('/api/demo/users', '_blank')">
+                <div class="endpoint-name">👥 Users API</div>
+                <a href="/api/demo/users" class="endpoint-url">/api/demo/users</a>
+            </div>
+            <div class="endpoint-card" onclick="window.open('/api/demo/slow', '_blank')">
+                <div class="endpoint-name">🐌 Slow Endpoint</div>
+                <a href="/api/demo/slow" class="endpoint-url">/api/demo/slow</a>
+            </div>
+            <div class="endpoint-card" onclick="window.open('/api/demo/error', '_blank')">
+                <div class="endpoint-name">⚠️ Error Simulation</div>
+                <a href="/api/demo/error" class="endpoint-url">/api/demo/error</a>
+            </div>
+            <div class="endpoint-card" onclick="window.open('/actuator/health', '_blank')">
+                <div class="endpoint-name">📊 Actuator Health</div>
+                <a href="/actuator/health" class="endpoint-url">/actuator/health</a>
+            </div>
+            <div class="endpoint-card" onclick="window.open('/actuator/prometheus', '_blank')">
+                <div class="endpoint-name">📈 Prometheus Metrics</div>
+                <a href="/actuator/prometheus" class="endpoint-url">/actuator/prometheus</a>
+            </div>
+            <div class="endpoint-card" onclick="window.open('/h2-console', '_blank')">
+                <div class="endpoint-name">🗄️ H2 Console</div>
+                <a href="/h2-console" class="endpoint-url">/h2-console</a>
+            </div>
+            <div class="endpoint-card" onclick="window.open('/api/demo/metrics', '_blank')">
+                <div class="endpoint-name">📊 Custom Metrics</div>
+                <a href="/api/demo/metrics" class="endpoint-url">/api/demo/metrics</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎉 Keep learning and practicing! Your DevOps journey is just beginning! 🎉</p>
+            <p style="margin-top: 10px;">
+                <strong>Timestamp:</strong> <span th:text="${timestamp}">Loading...</span> |
+                <strong>Status:</strong> <span style="color: #27ae60;">🟢 Running</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Update timestamp every second
+        function updateTimestamp() {
+            const now = new Date();
+            const timestampElement = document.querySelector('[th\\:text="${timestamp}"]');
+            if (timestampElement) {
+                timestampElement.textContent = now.toLocaleString();
+            }
+        }
+        
+        // Update immediately and then every second
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.endpoint-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

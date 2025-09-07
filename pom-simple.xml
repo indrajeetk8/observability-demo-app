@@ -44,12 +44,6 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         
-        <!-- Thymeleaf Template Engine -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
