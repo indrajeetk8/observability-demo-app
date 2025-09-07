@@ -64,29 +64,32 @@ pipeline {
         expression { return fileExists('Dockerfile') && (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) }
       }
       steps {
-        sh '''
-          set -eux
+        script {
+          // Handle environment variables safely
+          def dockerRegistry = env.DOCKER_REGISTRY ?: ''
+          def dockerRepository = env.DOCKER_REPOSITORY ?: 'observability-demo'
+          def imageTag = env.BUILD_NUMBER
           
-          # Set image reference based on whether registry is provided
-          if [ -n "${DOCKER_REGISTRY}" ] && [ "${DOCKER_REGISTRY}" != "" ]; then
-            IMAGE_REF="${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG}"
-            echo "Building image with registry: ${IMAGE_REF}"
-          else
-            IMAGE_REF="${DOCKER_REPOSITORY}:${IMAGE_TAG}"
-            echo "Building local image: ${IMAGE_REF}"
-          fi
+          // Build image reference
+          def imageRef
+          if (dockerRegistry && dockerRegistry.trim()) {
+            imageRef = "${dockerRegistry}/${dockerRepository}:${imageTag}"
+            echo "Building image with registry: ${imageRef}"
+          } else {
+            imageRef = "${dockerRepository}:${imageTag}"
+            echo "Building local image: ${imageRef}"
+          }
           
-          # Build the Docker image
-          docker build -t "${IMAGE_REF}" .
-          
-          # Save image reference for potential push
-          echo "${IMAGE_REF}" > .image_ref
-          
-          # Show built images
-          docker images | grep "${DOCKER_REPOSITORY}" || echo "No images found with repository name ${DOCKER_REPOSITORY}"
-          
-          echo "Docker build completed successfully!"
-        '''
+          // Build Docker image
+          sh """
+            set -eux
+            echo "Building Docker image: ${imageRef}"
+            docker build -t "${imageRef}" .
+            echo "${imageRef}" > .image_ref
+            docker images | grep "${dockerRepository}" || echo "No images found with repository name ${dockerRepository}"
+            echo "Docker build completed successfully!"
+          """
+        }
       }
     }
 
