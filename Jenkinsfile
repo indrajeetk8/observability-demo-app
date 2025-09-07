@@ -66,12 +66,26 @@ pipeline {
       steps {
         sh '''
           set -eux
-          IMAGE_REF="${DOCKER_REPOSITORY}:${IMAGE_TAG}"
-          if [ -n "${DOCKER_REGISTRY}" ]; then IMAGE_REF="${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG}"; fi
-          echo "Building ${IMAGE_REF}"
+          
+          # Set image reference based on whether registry is provided
+          if [ -n "${DOCKER_REGISTRY}" ] && [ "${DOCKER_REGISTRY}" != "" ]; then
+            IMAGE_REF="${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG}"
+            echo "Building image with registry: ${IMAGE_REF}"
+          else
+            IMAGE_REF="${DOCKER_REPOSITORY}:${IMAGE_TAG}"
+            echo "Building local image: ${IMAGE_REF}"
+          fi
+          
+          # Build the Docker image
           docker build -t "${IMAGE_REF}" .
+          
+          # Save image reference for potential push
           echo "${IMAGE_REF}" > .image_ref
-          docker images | grep "${DOCKER_REPOSITORY}" || true
+          
+          # Show built images
+          docker images | grep "${DOCKER_REPOSITORY}" || echo "No images found with repository name ${DOCKER_REPOSITORY}"
+          
+          echo "Docker build completed successfully!"
         '''
       }
     }

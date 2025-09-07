@@ -1,5 +1,5 @@
 # Multi-stage build for optimized image
-FROM maven:3.9.5-eclipse-temurin-17 AS build
+FROM maven:3.9.5-eclipse-temurin-11 AS build
 
 WORKDIR /app
 COPY pom.xml .
@@ -9,7 +9,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:11-jre-alpine
 
 # Install curl for health checks
 RUN apk add --no-cache curl
